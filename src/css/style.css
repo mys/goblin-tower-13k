@@ -1,0 +1,16 @@
+body {
+	margin: 0;
+	overflow: hidden;
+	background: white;
+}
+canvas {
+	width: 640px; /* scale 2x */
+	height: 480px; /* scale 2x */
+	border: 1px solid black;
+
+	/* crisp pixel */
+	image-rendering: -moz-crisp-edges;
+	image-rendering: -webkit-crisp-edges;
+	image-rendering: pixelated;
+	image-rendering: crisp-edges;
+} 
