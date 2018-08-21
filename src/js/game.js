@@ -123,6 +123,23 @@ let loop = kontra.gameLoop({
 				}
 			}
 		}
+
+		// collide with walls
+		if (player.dx != 0){
+			for (let i = 0; i < sprites.length; i++){
+				if (sprites[i].type === 'wall' &&
+					player.collidesWith(sprites[i]))
+				{
+					if (sprites[i].side === 'left'){
+						player.x = sprites[i].x + sprites[i].width;
+					}
+					else {
+						player.x = sprites[i].x - player.width;
+					}
+					break
+				}
+			}
+		}
 	},
 	render: function(){
 		sprites.map(sprite => sprite.render());
