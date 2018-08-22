@@ -140,6 +140,10 @@ let loop = kontra.gameLoop({
 					else {
 						player.x = sprites[i].x - player.width;
 					}
+					// bounce if in air
+					if (!player.onPlatform){
+						player.dx = -player.dx;
+					}
 					break
 				}
 			}
