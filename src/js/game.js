@@ -2,7 +2,7 @@ kontra.init();
 
 const WALLS_WIDTH = 64
 const BLOCK = 16
-const VELOCITY = 4
+const VELOCITY = 6
 const DECELERATION = 0.1
 let sprites = [];
 
@@ -19,7 +19,7 @@ let player = kontra.sprite({
 	update(){
 		if (kontra.keys.pressed('up') || kontra.keys.pressed('space')){
 			if (player.dy == 0){
-				this.dy = -(1 + Math.abs(this.dx));
+				this.dy = -(3 + Math.sqrt(Math.abs(this.dx)));
 				this.ddy = DECELERATION;
 				this.onPlatform = false;
 			}
@@ -27,16 +27,20 @@ let player = kontra.sprite({
 		if (kontra.keys.pressed('left') || kontra.keys.pressed('right')){
 			if (kontra.keys.pressed('left')){
 				if (this.dx > 0){
-					this.dx = 0;
+					this.dx -= 0.5;
 				}
-				this.dx -= 0.1;
+				else {
+					this.dx -= 0.1;
+				}
 				this.dx = Math.max(this.dx, -VELOCITY);
 			}
 			if (kontra.keys.pressed('right')){
 				if (this.dx < 0){
-					this.dx = 0;
+					this.dx += 0.5;
 				}
-				this.dx += 0.1;
+				else {
+					this.dx += 0.1;
+				}
 				this.dx = Math.min(this.dx, VELOCITY);
 			}
 		}
@@ -59,7 +63,7 @@ let player = kontra.sprite({
 		this.advance();
 
 		// max speed of fall
-		this.dy = Math.min(this.dy, VELOCITY);
+		this.dy = Math.min(this.dy, VELOCITY * 0.8);
 	}
 })
 
