@@ -161,6 +161,17 @@ let loop = kontra.gameLoop({
 				}
 			}
 		}
+
+		// generate upper floors
+		if (player.y < 0){
+			sprites.map(sprite => {
+				if (sprite.type === 'platform'){
+					sprite.y -= player.y;
+				}
+			})
+			player.y = 0;
+			createPlatforms();
+		}
 	},
 	render: function(){
 		sprites.map(sprite => sprite.render());
