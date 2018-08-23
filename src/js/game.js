@@ -80,22 +80,35 @@ function createWall(side='left'){
 	sprites.push(wall);
 }
 
-function createPlatform(){
-	let width = Math.floor((Math.random() * 3 + 1)) * 32;
+function createPlatform(y=192, fullWidth=false){
+	let width = fullWidth ? 192 : Math.floor((Math.random() * 3) + 2) * BLOCK;
 	let platform = kontra.sprite({
 		width: width,
 		height: BLOCK,
-		x: WALLS_WIDTH + Math.floor(Math.random() * (kontra.canvas.width - width- 2 * WALLS_WIDTH)),
-		y: 192,
+		x: WALLS_WIDTH + Math.floor(
+			Math.random() * (kontra.canvas.width - width -2 * WALLS_WIDTH)),
+		y: y,
 		color: 'green',
 		type: 'platform'
 	});
 	sprites.push(platform);
 }
 
+function createPlatforms(){
+	for (let i = kontra.canvas.height - BLOCK; i > -2 * BLOCK; i -= BLOCK * 2){
+		if (!sprites.find(sprite => 
+			sprite.type === 'platform' && 
+			sprite.y < i + BLOCK * 2))
+		{
+			createPlatform(y=i);
+		}
+	}
+}
+
 createWall('left');
 createWall('right');
-createPlatform();
+createPlatform(y=kontra.canvas.height - BLOCK, true);
+createPlatforms();
 
 let loop = kontra.gameLoop({
 	update: function(){
@@ -116,7 +129,7 @@ let loop = kontra.gameLoop({
 			for (let i = 0; i < sprites.length; i++){
 				if (sprites[i].type === 'platform' &&
 					player.y + player.height >= sprites[i].y &&
-					player.y + player.height <= sprites[i].y + 4 &&
+					player.y + player.height <= sprites[i].y + 6 &&
 					player.x + player.width > sprites[i].x &&
 					player.x < sprites[i].x + sprites[i].width)
 				{
