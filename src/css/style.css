@@ -4,8 +4,8 @@ body {
 	background: white;
 }
 canvas {
-	width: 640px; /* scale 2x */
-	height: 480px; /* scale 2x */
+	width: 960px; /* scale 3x */
+	height: 720px; /* scale 3x */
 	border: 1px solid black;
 
 	/* crisp pixel */
@@ -14,3 +14,9 @@ canvas {
 	image-rendering: pixelated;
 	image-rendering: crisp-edges;
 } 
+
+#textCanvas {
+	position:fixed;
+	top:0;
+	left:0;
+}

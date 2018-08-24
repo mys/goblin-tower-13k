@@ -5,6 +5,7 @@ const BLOCK = 16
 const VELOCITY = 6
 const DECELERATION = 0.1
 let sprites = [];
+let score = 0;
 
 let player = kontra.sprite({
 	x: 320 / 2 - 8,
@@ -105,6 +106,7 @@ function createPlatforms(){
 	}
 }
 
+createTextCanvas();
 createWall('left');
 createWall('right');
 createPlatform(y=kontra.canvas.height - BLOCK, true);
@@ -176,6 +178,27 @@ let loop = kontra.gameLoop({
 	render: function(){
 		sprites.map(sprite => sprite.render());
 		player.render();
+
+		drawText('SCORE', 0.5, '#50514f', {
+            x: 8,
+            y: 4
+        })
+		drawText(score.toString(), 0.5, '#50514f', {
+            x: 48,
+            y: 24
+        }, true)
+		drawText('GOBLIN', 0.3, '#50514f', {
+            x: 260,
+            y: 4
+        })
+		drawText('TOWER 13k', 0.3, '#50514f', {
+            x: 260,
+            y: 16
+        })
+		drawText('@mys', 0.3, '#50514f', {
+            x: 288,
+            y: 228
+        })
 	}
 });
 loop.start();
