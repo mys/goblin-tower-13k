@@ -13,6 +13,7 @@
 	- Camera speed
 	- Random generations
 - Menu
+- Window scaling
 - Scores
 - Sound and Music
 - Loader
