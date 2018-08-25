@@ -6,6 +6,7 @@ const VELOCITY = 6
 const DECELERATION = 0.1
 let sprites = [];
 let score = 0;
+let highestScore = -10; // base is 0
 
 let player = kontra.sprite({
 	x: 320 / 2 - 8,
@@ -82,6 +83,7 @@ function createWall(side='left'){
 }
 
 function createPlatform(y=192, fullWidth=false){
+	highestScore += 10;
 	let width = fullWidth ? 192 : Math.floor((Math.random() * 3) + 2) * BLOCK;
 	let platform = kontra.sprite({
 		width: width,
@@ -90,7 +92,8 @@ function createPlatform(y=192, fullWidth=false){
 			Math.random() * (kontra.canvas.width - width -2 * WALLS_WIDTH)),
 		y: y,
 		color: 'green',
-		type: 'platform'
+		type: 'platform',
+		highestScore: highestScore
 	});
 	sprites.push(platform);
 }
@@ -138,6 +141,10 @@ let loop = kontra.gameLoop({
 					player.y = sprites[i].y - player.height;
 					player.dy = player.ddy = 0;
 					player.onPlatform = true;
+					if (sprites[i].highestScore > score){
+						score = sprites[i].highestScore;
+						TCTX.clearRect(0, 24, WALLS_WIDTH, 32);
+					}
 					break;
 				}
 			}
@@ -182,7 +189,7 @@ let loop = kontra.gameLoop({
 		drawText('SCORE', 0.5, '#50514f', {
             x: 8,
             y: 4
-        })
+		})
 		drawText(score.toString(), 0.5, '#50514f', {
             x: 48,
             y: 24
