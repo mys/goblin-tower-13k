@@ -11,66 +11,12 @@ let topScore = 0;
 let highestScore = -10; // base is 0
 let tilt = true;
 
-let player = kontra.sprite({
-	x: 320 / 2 - 8,
-	y: 240 / 2 - 8,
-	ddy: DECELERATION,
-	width: BLOCK,
-	height: BLOCK,
-	color: 'red',
-	type: 'player',
-	onPlatform: false,
+let imageGoblin = new Image();
+imageGoblin.src = '../src/img/goblin.png';
 
-	update(){
-		if (kontra.keys.pressed('up') || kontra.keys.pressed('space')){
-			if (player.dy == 0){
-				this.dy = -(3 + Math.sqrt(Math.abs(this.dx)));
-				this.ddy = DECELERATION;
-				this.onPlatform = false;
-			}
-		}
-		if (kontra.keys.pressed('left') || kontra.keys.pressed('right')){
-			if (kontra.keys.pressed('left')){
-				if (this.dx > 0){
-					this.dx -= 0.5;
-				}
-				else {
-					this.dx -= 0.1;
-				}
-				this.dx = Math.max(this.dx, -VELOCITY);
-			}
-			if (kontra.keys.pressed('right')){
-				if (this.dx < 0){
-					this.dx += 0.5;
-				}
-				else {
-					this.dx += 0.1;
-				}
-				this.dx = Math.min(this.dx, VELOCITY);
-			}
-		}
-		else {
-			this.dx *= 0.9;
-		}
+let spriteSheet;
+let player;
 
-		// fall from platform
-		for (let i = 0; i < sprites.length; i++){
-			if (this.onPlatform &&
-				sprites[i].type === 'platform' &&
-				(player.x + player.width <= sprites[i].x ||
-				player.x >= sprites[i].x + sprites[i].width))
-			{
-				player.ddy = DECELERATION;
-				onPlatform = false;
-				break;
-			}
-		};
-		this.advance();
-
-		// max speed of fall
-		this.dy = Math.min(this.dy, VELOCITY * 0.8);
-	}
-})
 
 function createWall(side='left'){
 	let wall = kontra.sprite({
@@ -182,11 +128,139 @@ function startGame(){
 	gameScene = 1;
 }
 
-createTextCanvas();
-setInterval(function(){ tilt = !tilt }, 500);
-createWall('left');
-createWall('right');
-startMenu();
+imageGoblin.onload = function() {
+	createTextCanvas();
+
+	// use kontra.spriteSheet to create animations from an image
+	spriteSheet = kontra.spriteSheet({
+		image: imageGoblin,
+		frameWidth: 16,
+		frameHeight: 16,
+		animations: {
+			idle: {
+				frames: 0
+			},
+			walkLeft: {
+				frames: '6..7',
+				frameRate: 10
+			},
+			walkRight: {
+				frames: '3..4',
+				frameRate: 10
+			},
+			jump: {
+				frames: 1
+			},
+			jumpLeft: {
+				frames: 8
+			},
+			jumpRight: {
+				frames: 5
+			}
+		}
+	});
+
+	player = kontra.sprite({
+		x: 320 / 2 - 8,
+		y: 240 / 2 - 8,
+		ddy: DECELERATION,
+		// width: BLOCK,
+		// height: BLOCK,
+		// color: 'red',
+		type: 'player',
+		onPlatform: false,
+		animation: 'idle',
+		animations: spriteSheet.animations,
+
+		animate(anim){
+			if (this.animation != anim){
+				this.animation = anim;
+				player.playAnimation(anim);
+			}
+		},
+		update(){
+			if (kontra.keys.pressed('up') || kontra.keys.pressed('space')){
+				if (player.dy == 0){
+					this.dy = -(3 + Math.sqrt(Math.abs(this.dx)));
+					this.ddy = DECELERATION;
+					this.onPlatform = false;
+				}
+			}
+			if (kontra.keys.pressed('left') || kontra.keys.pressed('right')){
+				if (kontra.keys.pressed('left')){
+					if (this.dx > 0){
+						this.dx -= 0.5;
+					}
+					else {
+						this.dx -= 0.1;
+					}
+					this.dx = Math.max(this.dx, -VELOCITY);
+				}
+				if (kontra.keys.pressed('right')){
+					if (this.dx < 0){
+						this.dx += 0.5;
+					}
+					else {
+						this.dx += 0.1;
+					}
+					this.dx = Math.min(this.dx, VELOCITY);
+				}
+			} else {
+				this.dx *= 0.9;
+			}
+
+			// fall from platform
+			for (let i = 0; i < sprites.length; i++){
+				if (this.onPlatform &&
+					sprites[i].type === 'platform' &&
+					(player.x + player.width <= sprites[i].x ||
+					player.x >= sprites[i].x + sprites[i].width))
+				{
+					player.ddy = DECELERATION;
+					onPlatform = false;
+					break;
+				}
+			};
+
+			// animate
+			if (this.onPlatform){
+				if (this.dx > 0){
+					this.animate('walkRight');
+				} else if (this.dx < 0){
+					this.animate('walkLeft');
+				} else{
+					this.animate('idle');
+				}
+			} else {
+				if (this.dx > 0){
+					this.animate('jumpRight');
+				} else if (this.dx < 0){
+					this.animate('jumpLeft');
+				} else{
+					this.animate('jump');
+				}
+			}
+			this.advance();
+
+			// normalizations (deblur)
+			if (this.dx == 0){
+				this.x = Math.round(this.x);
+			}
+			if (this.dy == 0){
+				this.y = Math.round(this.y);
+			}
+			this.dx = Math.abs(this.dx) >= DECELERATION ? this.dx : 0;
+			this.dy = Math.min(this.dy, VELOCITY * 0.8);
+		}
+	})
+
+	setInterval(function(){ tilt = !tilt }, 500);
+	createWall('left');
+	createWall('right');
+	startMenu();
+
+	loop.start();
+};
 
 let loop = kontra.gameLoop({
 	update: function(){
@@ -277,27 +351,38 @@ let loop = kontra.gameLoop({
 		if (gameScene == 0){
 			sprites.map(sprite => sprite.render());
 
+			drawText('STEEM MONSTERS', 0.5, 'brown', {
+				x: 89,
+				y: 33
+			})
 			drawText('STEEM MONSTERS', 0.5, 'orange', {
 				x: 88,
 				y: 32
 			})
-			drawText('GOBLIN TOWER 13k', 0.8, 'orange', {
-				x: 40,
+			drawText('GOBLIN TOWER 13k', 0.9, 'brown', {
+				x: 17,
+				y: 57
+			})
+			drawText('GOBLIN TOWER 13k', 0.9, 'orange', {
+				x: 16,
 				y: 56
 			})
 			drawText('PRESS SPACE TO START', 0.5, tilt ? 'white' : '#50514f', {
 				x: 64,
 				y: 128
 			})
-			
 			if (topScore > 0){
+				drawText('TOP SCORE ' + topScore.toString(), 0.5, 'brown', {
+					x: 105,
+					y: 193
+				})
 				drawText('TOP SCORE ' + topScore.toString(), 0.5, 'orange', {
 					x: 104,
 					y: 192
 				})
 			}
 			drawText('STEEM  @mys', 0.3, '#50514f', {
-				x: 246,
+				x: 244,
 				y: 228
 			})
 		}
@@ -331,12 +416,9 @@ let loop = kontra.gameLoop({
 				y: 16
 			})
 			drawText('@mys', 0.3, '#50514f', {
-				x: 288,
+				x: 286,
 				y: 228
 			})
 		}
 	}
 });
-loop.start();
-
-console.log(sprites);
