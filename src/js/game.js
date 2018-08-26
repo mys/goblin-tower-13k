@@ -47,6 +47,39 @@ function createWall(side='left'){
 				this.ddx = -0.1;
 			}
 		},
+		generateBricks(){
+			let offset = 16;
+			let offsetTwo = this.side == 'left' ? 0 : 0;
+			this.context.lineWidth = 2;
+			for (let j = 0; j < this.height; j){
+				for (let i = 0; i < this.width; i){
+					let start = i;
+					let width = 32 - (i == 0 ? offset : 0);
+					if (i + width > this.width){
+						width = this.width - i - 3;
+						i += 3;
+					}
+					i += width;
+					this.context.strokeStyle = 'darkgrey';
+					this.context.strokeRect(
+						this.x + start - offsetTwo, this.y + j,
+						width, 16);
+					this.context.strokeStyle = 'dimgrey';
+					this.context.strokeRect(
+						this.x + start - offsetTwo + 2, this.y + j + 2,
+						width, 16);
+				}
+				offset = offset == 16 ? 0 : 16;
+				if (this.side == 'left'){
+					offsetTwo = offsetTwo == 3 ? 0 : 3;
+				}
+				j += 16;
+			}
+		},
+		render(){
+			this.draw();
+			this.generateBricks();
+		},
 		update(){
 			if (this.dx != 0){
 				if (this.side == 'left'){
