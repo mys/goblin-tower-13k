@@ -4,19 +4,19 @@ const WALLS_WIDTH = 64
 const BLOCK = 16
 const VELOCITY = 6
 const DECELERATION = 0.1
+const BIG_PLATFORM = 500
+const NEW_LEVEL = 1000
 let gameScene = 0 // 0 - menu, 1 - game
 let sprites = [];
 let score = 0;
 let topScore = 0;
 let highestScore = -10; // base is 0
 let tilt = true;
-
-let imageGoblin = new Image();
-imageGoblin.src = '../src/img/goblin.png';
-
 let spriteSheet;
 let player;
 
+let imageGoblin = new Image();
+imageGoblin.src = '../src/img/goblin.png';
 
 function createWall(side='left', open=false){
 	let wall = kontra.sprite({
@@ -123,7 +123,6 @@ function createWall(side='left', open=false){
 		sprite.y < 240);
 	if (previousWall)
 	{
-		console.log('previous wall');
 		wall.y = previousWall.y - 240;
 	}
 	sprites.push(wall);
@@ -133,14 +132,31 @@ function createPlatform(y=192, fullWidth=false){
 	highestScore += 10;
 	let width = fullWidth ? 192 : Math.floor((Math.random() * 3) + 2) * BLOCK;
 	let platform = kontra.sprite({
-		width: width,
+		width: highestScore % BIG_PLATFORM == 0 
+			? kontra.canvas.width - 2 * WALLS_WIDTH 
+			: width,
 		height: BLOCK,
-		x: WALLS_WIDTH + Math.floor(
-			Math.random() * (kontra.canvas.width - width -2 * WALLS_WIDTH)),
+		x: highestScore % BIG_PLATFORM == 0 
+			? WALLS_WIDTH
+			: WALLS_WIDTH + Math.floor(
+				Math.random() * (kontra.canvas.width - width - 2 * WALLS_WIDTH)),
 		y: y,
 		color: 'green',
 		type: 'platform',
-		highestScore: highestScore
+		highestScore: highestScore,
+		render(){
+			this.draw();
+			if (gameScene == 1 && 
+				this.highestScore % 100 == 0 &&
+				this.highestScore != 0)
+			{
+				TCTX.clearRect(this.x, this.y - 8, this.width, this.height + 16);
+				drawTextShadowed(this.highestScore.toString(), 0.3, 'orange', {
+					x: this.x + this.width / 2 - 2 - (2 * highestScore.toString().length),
+					y: this.y + 4,
+				})
+			}
+		}
 	});
 	sprites.push(platform);
 }
@@ -166,7 +182,6 @@ function createWalls(){
 		sprite.type === 'wall' && 
 		sprite.y <= 0))
 	{
-		console.log('add walls')
 		createWall('left', true);
 		createWall('right', true);
 	}
