@@ -4,7 +4,7 @@ const WALLS_WIDTH = 64
 const BLOCK = 16
 const VELOCITY = 6
 const DECELERATION = 0.1
-let gameScene = 0
+let gameScene = 0 // 0 - menu, 1 - game
 let sprites = [];
 let score = 0;
 let topScore = 0;
@@ -18,7 +18,7 @@ let spriteSheet;
 let player;
 
 
-function createWall(side='left'){
+function createWall(side='left', open=false){
 	let wall = kontra.sprite({
 		width: kontra.canvas.width / 2,
 		height: kontra.canvas.height,
@@ -110,6 +110,22 @@ function createWall(side='left'){
 			this.advance();
 		}
 	});
+	if (open){
+		if (side == 'left'){
+			wall.x = WALLS_WIDTH - kontra.canvas.width / 2;
+		} else {
+			wall.x = kontra.canvas.width - WALLS_WIDTH;
+		}
+	}
+	let previousWall = sprites.find(sprite => 
+		sprite.type === 'wall' && 
+		sprite.side == wall.side && 
+		sprite.y < 240);
+	if (previousWall)
+	{
+		console.log('previous wall');
+		wall.y = previousWall.y - 240;
+	}
 	sprites.push(wall);
 }
 
@@ -137,6 +153,22 @@ function createPlatforms(){
 		{
 			createPlatform(y=i);
 		}
+	}
+}
+
+function createWalls(){
+	if (!sprites.find(sprite => 
+		sprite.type === 'wall'))
+	{
+		createWall('left');
+		createWall('right');
+	} else if (!sprites.find(sprite => 
+		sprite.type === 'wall' && 
+		sprite.y <= 0))
+	{
+		console.log('add walls')
+		createWall('left', true);
+		createWall('right', true);
 	}
 }
 
@@ -288,8 +320,7 @@ imageGoblin.onload = function() {
 	})
 
 	setInterval(function(){ tilt = !tilt }, 500);
-	createWall('left');
-	createWall('right');
+	createWalls();
 	startMenu();
 
 	loop.start();
@@ -371,12 +402,19 @@ let loop = kontra.gameLoop({
 			// generate upper floors
 			if (player.y < 0){
 				sprites.map(sprite => {
-					if (sprite.type === 'platform'){
+					if (sprite.type === 'platform' ||
+						sprite.type === 'wall'){
 						sprite.y -= player.y;
 					}
 				})
 				player.y = 0;
+				createWalls();
 				createPlatforms();
+
+				// remove old sprites
+				sprites = sprites.filter(function (sprite) {
+					return sprite.y < 240;
+				});
 			}
 		}
 	},
