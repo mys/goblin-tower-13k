@@ -60,7 +60,7 @@ function createWall(side='left'){
 						i += 3;
 					}
 					i += width;
-					this.context.strokeStyle = 'darkgrey';
+					this.context.strokeStyle = '#4d4d4d';
 					this.context.strokeRect(
 						this.x + start - offsetTwo, this.y + j,
 						width, 16);
@@ -384,37 +384,29 @@ let loop = kontra.gameLoop({
 		if (gameScene == 0){
 			sprites.map(sprite => sprite.render());
 
-			drawText('STEEM MONSTERS', 0.5, 'brown', {
-				x: 89,
-				y: 33
-			})
-			drawText('STEEM MONSTERS', 0.5, 'orange', {
+			drawTextShadowed('STEEM MONSTERS', 0.5, 'orange', {
 				x: 88,
 				y: 32
 			})
-			drawText('GOBLIN TOWER 13k', 0.9, 'brown', {
-				x: 17,
-				y: 57
-			})
-			drawText('GOBLIN TOWER 13k', 0.9, 'orange', {
+			drawTextShadowed('GOBLIN TOWER 13k', 0.9, 'orange', {
 				x: 16,
-				y: 56
+				y: 60
 			})
-			drawText('PRESS SPACE TO START', 0.5, tilt ? 'white' : '#50514f', {
+			drawText('13 KILOBYTE  MINI GAME', 0.3, 'orange', {
+				x: 91,
+				y: 100
+			})
+			drawText('PRESS SPACE TO START', 0.5, tilt ? 'orange' : 'brown', {
 				x: 64,
-				y: 128
+				y: 136
 			})
 			if (topScore > 0){
-				drawText('TOP SCORE ' + topScore.toString(), 0.5, 'brown', {
-					x: 105,
-					y: 193
-				})
-				drawText('TOP SCORE ' + topScore.toString(), 0.5, 'orange', {
+				drawTextShadowed('TOP SCORE ' + topScore.toString(), 0.5, 'orange', {
 					x: 104,
 					y: 192
 				})
 			}
-			drawText('STEEM  @mys', 0.3, '#50514f', {
+			drawText('STEEM  @mys', 0.3, 'brown', {
 				x: 244,
 				y: 228
 			})
@@ -432,25 +424,21 @@ let loop = kontra.gameLoop({
 			});
 			player.render();
 	
-			drawText('SCORE', 0.5, '#50514f', {
+			drawTextShadowed('SCORE', 0.5, 'orange', {
 				x: 8,
 				y: 4
 			})
-			drawText(score.toString(), 0.5, '#50514f', {
+			drawTextShadowed(score.toString(), 0.5, 'orange', {
 				x: 48,
 				y: 24
 			}, true)
-			drawText('GOBLIN', 0.3, '#50514f', {
+			drawTextShadowed('GOBLIN', 0.3, 'orange', {
 				x: 260,
 				y: 4
 			})
-			drawText('TOWER 13k', 0.3, '#50514f', {
+			drawTextShadowed('TOWER 13k', 0.3, 'orange', {
 				x: 260,
 				y: 16
-			})
-			drawText('@mys', 0.3, '#50514f', {
-				x: 286,
-				y: 228
 			})
 		}
 	}

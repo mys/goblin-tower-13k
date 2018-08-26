@@ -279,6 +279,12 @@ function createTextCanvas() {
     document.body.appendChild(TCVS);
 }
 
+function drawTextShadowed(string, size, fillStyle, pos, rAlign = false){
+	drawText(string, size, 'brown', 
+		{x: pos.x+1, y: pos.y+Math.ceil(size*2)}, rAlign);
+	drawText(string, size, fillStyle, pos, rAlign);
+}
+
 //draw text
 //canvas is not cleared, and fillstyle not set!
 function drawText(string, size, fillStyle, pos, rAlign = false) {
