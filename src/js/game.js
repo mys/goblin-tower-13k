@@ -1,11 +1,9 @@
-kontra.init();
-
 const WALLS_WIDTH = 64
 const BLOCK = 16
 const VELOCITY = 6
 const DECELERATION = 0.1
-const BIG_PLATFORM = 500
-const NEW_LEVEL = 1000
+const BIG_PLATFORM = 100
+const NEW_LEVEL = 100
 let gameScene = 0 // 0 - menu, 1 - game
 let sprites = [];
 let score = 0;
@@ -14,6 +12,47 @@ let highestScore = -10; // base is 0
 let tilt = true;
 let spriteSheet;
 let player;
+let levels = [
+	{
+		'splinter': 'Fire',
+		'color': 'indianred',
+		'background': '#752424',
+		'land': 'The Burning Lands'
+	},
+	{
+		'splinter': 'Water',
+		'color': 'royalblue',
+		'background': '#11286e',
+		'land': 'AZMARE Islands'
+	},
+	{
+		'splinter': 'Earth',
+		'color': 'seagreen',
+		'background': '#20603b',
+		'land': 'ANUMUN'
+	},
+	{
+		'splinter': 'Death',
+		'color': 'mediumpurple',
+		'background': '#3d1f7a',
+		'land': 'MorTis'
+	},
+	{
+		'splinter': 'Life',
+		'color': 'navajowhite',
+		'background': '#ffebcc',
+		'land': 'Khymeria'
+	},
+	{
+		'splinter': 'Dragon',
+		'color': '#806c00',
+		'background': 'gold',
+		'land': 'Draykh-Nahka'
+	},
+]
+let level = 0
+
+kontra.init();
 
 let imageGoblin = new Image();
 imageGoblin.src = '../src/img/goblin.png';
@@ -24,7 +63,7 @@ function createWall(side='left', open=false){
 		height: kontra.canvas.height,
 		x: side == 'left' ? 0 : kontra.canvas.width / 2,
 		y: 0,
-		color: 'grey',
+		color: levels[level]['color'],
 		type: 'wall',
 		side: side,
 		open: function(){
@@ -126,10 +165,18 @@ function createWall(side='left', open=false){
 		wall.y = previousWall.y - 240;
 	}
 	sprites.push(wall);
+	return wall;
 }
 
 function createPlatform(y=192, fullWidth=false){
 	highestScore += 10;
+	if (isNewLevel())
+	{
+		level += 1;
+		if (level > levels.length - 1){
+			level = 0;
+		}
+	}
 	let width = fullWidth ? 192 : Math.floor((Math.random() * 3) + 2) * BLOCK;
 	let platform = kontra.sprite({
 		width: highestScore % BIG_PLATFORM == 0 
@@ -141,13 +188,13 @@ function createPlatform(y=192, fullWidth=false){
 			: WALLS_WIDTH + Math.floor(
 				Math.random() * (kontra.canvas.width - width - 2 * WALLS_WIDTH)),
 		y: y,
-		color: 'green',
+		color: levels[level]['color'],
 		type: 'platform',
 		highestScore: highestScore,
 		render(){
 			this.draw();
 			if (gameScene == 1 && 
-				this.highestScore % 100 == 0 &&
+				this.highestScore % BIG_PLATFORM == 0 &&
 				this.highestScore != 0)
 			{
 				TCTX.clearRect(this.x, this.y - 8, this.width, this.height + 16);
@@ -161,13 +208,23 @@ function createPlatform(y=192, fullWidth=false){
 	sprites.push(platform);
 }
 
-function createPlatforms(){
+function createScene(){
 	for (let i = kontra.canvas.height - BLOCK; i > -2 * BLOCK; i -= BLOCK * 2){
 		if (!sprites.find(sprite => 
 			sprite.type === 'platform' && 
 			sprite.y < i + BLOCK * 2))
 		{
-			createPlatform(y=i);
+			sprite = sprites.find(
+				sprite => sprite.highestScore == highestScore);
+			createPlatform(sprite.y - 32);
+			
+			if (isNewLevel())
+			{
+				let y = sprite.y - 240 - 16;
+				createBackground(y);
+				createWall('left', true).y = y;
+				createWall('right', true).y = y;
+			}
 		}
 	}
 }
@@ -187,6 +244,22 @@ function createWalls(){
 	}
 }
 
+function createBackground(y=0){
+	let background = kontra.sprite({
+		width: kontra.canvas.width - 2 * WALLS_WIDTH,
+		height: kontra.canvas.height,
+		x: WALLS_WIDTH,
+		y: y,
+		color: levels[level]['background'],
+		type: 'background'
+	});
+	sprites.push(background);
+}
+
+function isNewLevel(){
+	return highestScore % NEW_LEVEL == 0 && highestScore != 0;
+}
+
 function startMenu(){
 	gameScene = 0;
 	score = 0;
@@ -198,13 +271,16 @@ function startMenu(){
 }
 
 function startGame(){
+	// reset scene
 	TCTX.clearRect(0, 0, kontra.canvas.width, kontra.canvas.height);
 	sprites = sprites.filter(function (sprite) {
 		return sprite.type == 'wall';
 	});
+
 	sprites.map(sprite => sprite.open());
+	createBackground();
 	createPlatform(y=kontra.canvas.height - BLOCK, true);
-	createPlatforms();
+	createScene();
 	gameScene = 1;
 }
 
@@ -368,7 +444,9 @@ let loop = kontra.gameLoop({
 						sprite.close();
 					}
 				});
-				sprites.sort(sprite => sprite.type == 'wall');
+				sprites.sort(sprite => 
+					// sprite.type == 'wall' &&
+					sprite.color == levels[level]['color']);
 				startMenu();
 			}
 
@@ -417,14 +495,20 @@ let loop = kontra.gameLoop({
 			// generate upper floors
 			if (player.y < 0){
 				sprites.map(sprite => {
-					if (sprite.type === 'platform' ||
-						sprite.type === 'wall'){
+					if (sprite.type == 'platform' ||
+						sprite.type == 'wall'){
 						sprite.y -= player.y;
+					}
+					if (sprite.type == 'background'){
+						// scroll parallax, move o .background after
+						if (sprite.y < 0){
+							sprite.y = Math.min(sprite.y - player.y, 0);
+						}
 					}
 				})
 				player.y = 0;
+				createScene();
 				createWalls();
-				createPlatforms();
 
 				// remove old sprites
 				sprites = sprites.filter(function (sprite) {
@@ -465,6 +549,11 @@ let loop = kontra.gameLoop({
 			})
 		}
 		else{
+			sprites.map(sprite => {
+				if (sprite.type == 'background'){
+					sprite.render()
+				}
+			});
 			sprites.map(sprite => {
 				if (sprite.type == 'platform'){
 					sprite.render()
