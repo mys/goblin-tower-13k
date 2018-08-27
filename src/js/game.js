@@ -218,10 +218,10 @@ function createPlatform(y=192, fullWidth=false){
 				this.highestScore % BIG_PLATFORM == 0 &&
 				this.highestScore != 0)
 			{
-				TCTX.clearRect(this.x, this.y - 8, this.width, this.height + 16);
-				drawTextShadowed(this.highestScore.toString(), 0.3, 'orange', {
+				TCTX.clearRect(this.x, this.y - 12, this.width, this.height + 20);
+				drawTextShadowed(this.highestScore.toString(), 0.4, 'orange', {
 					x: this.x + this.width / 2 - 2 - (2 * highestScore.toString().length),
-					y: this.y + 4,
+					y: this.y + 2,
 				})
 			}
 		}
