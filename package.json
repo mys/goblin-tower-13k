@@ -1,0 +1,32 @@
+{
+  "name": "goblin-tower-13k",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "gulp test",
+    "build": "gulp build",
+    "watch": "gulp"
+  },
+  "author": "mys",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "gulp": "^4.0.0",
+    "gulp-check-filesize": "^2.0.1",
+    "gulp-clean-css": "^3.9.4",
+    "gulp-concat": "^2.6.1",
+    "gulp-eslint": "^5.0.0",
+    "gulp-html-replace": "^1.6.2",
+    "gulp-htmllint": "0.0.15",
+    "gulp-imagemin": "^4.1.0",
+    "gulp-minify-html": "^1.0.6",
+    "gulp-rename": "^1.4.0",
+    "gulp-rimraf": "^0.2.2",
+    "gulp-stylelint": "^7.0.0",
+    "gulp-terser": "^1.0.1",
+    "gulp-zip": "^4.2.0",
+    "stylelint": "^9.4.0",
+    "stylelint-config-standard": "^18.2.0",
+    "tunnel-agent": "^0.6.0"
+  }
+}
