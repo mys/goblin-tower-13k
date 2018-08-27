@@ -27,6 +27,15 @@ The game competes in 2 contests:
 - "Retro" pixel art style to get under limit of 13kB size
 - IcyTower play similarity
 
+# Installation
+
+```
+> npm install
+> gulp build
+
+run dist/index.html
+```
+
 # Demo
 
 ..
