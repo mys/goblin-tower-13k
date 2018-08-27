@@ -4,6 +4,22 @@ const VELOCITY = 6
 const DECELERATION = 0.1
 const BIG_PLATFORM = 100
 const NEW_LEVEL = 100
+
+let imageGoblin = new Image();
+imageGoblin.src = '../src/img/goblin.png';
+let imageFire = new Image();
+imageFire.src = '../src/img/fire.png';
+let imageWater = new Image();
+imageWater.src = '../src/img/water.png';
+let imageEarth = new Image();
+imageEarth.src = '../src/img/earth.png';
+let imageDeath = new Image();
+imageDeath.src = '../src/img/death.png';
+let imageLife = new Image();
+imageLife.src = '../src/img/life.png';
+let imageDragon = new Image();
+imageDragon.src = '../src/img/dragon.png';
+
 let gameScene = 0 // 0 - menu, 1 - game
 let sprites = [];
 let score = 0;
@@ -17,45 +33,48 @@ let levels = [
 		'splinter': 'Fire',
 		'color': 'indianred',
 		'background': '#752424',
-		'land': 'The Burning Lands'
+		'land': 'The Burning Lands',
+		'block': imageFire,
 	},
 	{
 		'splinter': 'Water',
 		'color': 'royalblue',
 		'background': '#11286e',
-		'land': 'AZMARE Islands'
+		'land': 'AZMARE Islands',
+		'block': imageWater,
 	},
 	{
 		'splinter': 'Earth',
 		'color': 'seagreen',
 		'background': '#20603b',
-		'land': 'ANUMUN'
+		'land': 'ANUMUN',
+		'block': imageEarth,
 	},
 	{
 		'splinter': 'Death',
 		'color': 'mediumpurple',
 		'background': '#3d1f7a',
-		'land': 'MorTis'
+		'land': 'MorTis',
+		'block': imageDeath,
 	},
 	{
 		'splinter': 'Life',
 		'color': 'navajowhite',
 		'background': '#ffebcc',
-		'land': 'Khymeria'
+		'land': 'Khymeria',
+		'block': imageLife,
 	},
 	{
 		'splinter': 'Dragon',
 		'color': '#806c00',
 		'background': 'gold',
-		'land': 'Draykh-Nahka'
+		'land': 'Draykh-Nahka',
+		'block': imageDragon
 	},
 ]
 let level = 0
 
 kontra.init();
-
-let imageGoblin = new Image();
-imageGoblin.src = '../src/img/goblin.png';
 
 function createWall(side='left', open=false){
 	let wall = kontra.sprite({
@@ -188,11 +207,13 @@ function createPlatform(y=192, fullWidth=false){
 			: WALLS_WIDTH + Math.floor(
 				Math.random() * (kontra.canvas.width - width - 2 * WALLS_WIDTH)),
 		y: y,
-		color: levels[level]['color'],
+		block: levels[level]['block'],
 		type: 'platform',
 		highestScore: highestScore,
 		render(){
-			this.draw();
+			for (let i = 0; i < this.width; i += BLOCK){
+				this.context.drawImage(this.block, this.x + i, this.y);
+			}
 			if (gameScene == 1 && 
 				this.highestScore % BIG_PLATFORM == 0 &&
 				this.highestScore != 0)
@@ -515,6 +536,16 @@ let loop = kontra.gameLoop({
 					return sprite.y < 240;
 				});
 			}
+
+			// normalizations (deblur)
+			sprites.map(sprite =>{
+				if (sprite.dx == 0){
+					sprite.x = Math.round(sprite.x);
+				}
+				if (sprite.dy == 0){
+					sprite.y = Math.round(sprite.y);
+				}
+			})
 		}
 	},
 	render: function(){
