@@ -20,6 +20,25 @@ let imageLife = new Image();
 imageLife.src = '../src/img/life.png';
 let imageDragon = new Image();
 imageDragon.src = '../src/img/dragon.png';
+
+let silvershieldwarrior = new Image();
+silvershieldwarrior.src = '../src/img/silvershieldwarrior.png';
+let mischievousmermaid = new Image();
+mischievousmermaid.src = '../src/img/mischievousmermaid.png';
+let goblinsorcerer = new Image();
+goblinsorcerer.src = '../src/img/goblinsorcerer.png';
+let firedemon = new Image();
+firedemon.src = '../src/img/firedemon.png';
+let koboldminer = new Image();
+koboldminer.src = '../src/img/koboldminer.png';
+let monsters = [
+	{ 'monster': silvershieldwarrior , x: 12 },
+	{ 'monster': mischievousmermaid , x: 16 },
+	{ 'monster': goblinsorcerer , x: 20 },
+	{ 'monster': firedemon , x: 1 },
+	{ 'monster': koboldminer , x: 12 }
+];
+
 imageFire.onload = function () {
 	loaded = true;
 }
@@ -191,6 +210,39 @@ function createWall(side='left', open=false){
 	return wall;
 }
 
+function createMonster(y){
+	let side = Math.random() > 0.5 ? 'left' : 'right';
+	if (sprites.find(sprite => 
+		sprite.type == 'monster' &&
+		sprite.side == side &&
+		sprite.y < 0))
+	{
+		return;
+	}
+	let ran = monsters[Math.floor(Math.random() * monsters.length)];
+	let monster = kontra.sprite({
+		x: ran['x'],
+		y: y,
+		block: ran['monster'],
+		type: 'monster',
+		side: side,
+		render(){
+			if (this.side == 'left'){
+				this.context.drawImage(this.block, this.x, this.y);
+			} else {
+				this.context.save();
+				// translate context to center of canvas
+				this.context.translate(kontra.canvas.width, 0);
+				// flip context horizontally
+				this.context.scale(-1,1);
+				this.context.drawImage(this.block, this.x, this.y);
+				this.context.restore();
+			}
+		}
+	});
+	sprites.push(monster);
+}
+
 function createPlatform(y=192, fullWidth=false){
 	highestScore += 10;
 	if (isNewLevel())
@@ -231,6 +283,9 @@ function createPlatform(y=192, fullWidth=false){
 		}
 	});
 	sprites.push(platform);
+	if (Math.random() * 10 > 5){
+		createMonster(platform.y - 128);
+	}
 }
 
 function createScene(){
@@ -442,6 +497,29 @@ imageGoblin.onload = function() {
 	loop.start();
 };
 
+function renderSprites(){
+	sprites.map(sprite => {
+		if (sprite.type == 'background'){
+			sprite.render()
+		}
+	});
+	sprites.map(sprite => {
+		if (sprite.type == 'platform'){
+			sprite.render()
+		}
+	});
+	sprites.map(sprite => {
+		if (sprite.type == 'wall'){
+			sprite.render()
+		}
+	});
+	sprites.map(sprite => {
+		if (sprite.type == 'monster'){
+			sprite.render()
+		}
+	});
+}
+
 let loop = kontra.gameLoop({
 	update: function(){
 		if (gameScene == 0){
@@ -521,7 +599,8 @@ let loop = kontra.gameLoop({
 			if (player.y < 0){
 				sprites.map(sprite => {
 					if (sprite.type == 'platform' ||
-						sprite.type == 'wall'){
+						sprite.type == 'wall' ||
+						sprite.type == 'monster'){
 						sprite.y -= player.y;
 					}
 					if (sprite.type == 'background'){
@@ -554,21 +633,7 @@ let loop = kontra.gameLoop({
 	},
 	render: function(){
 		if (gameScene == 0){
-			sprites.map(sprite => {
-				if (sprite.type == 'background'){
-					sprite.render()
-				}
-			});
-			sprites.map(sprite => {
-				if (sprite.type == 'platform'){
-					sprite.render()
-				}
-			});
-			sprites.map(sprite => {
-				if (sprite.type == 'wall'){
-					sprite.render()
-				}
-			});
+			renderSprites();
 
 			if (loaded){
 				for (let i = 0; i < 10 * 16; i += 16){
@@ -617,21 +682,7 @@ let loop = kontra.gameLoop({
 			})
 		}
 		else{
-			sprites.map(sprite => {
-				if (sprite.type == 'background'){
-					sprite.render()
-				}
-			});
-			sprites.map(sprite => {
-				if (sprite.type == 'platform'){
-					sprite.render()
-				}
-			});
-			sprites.map(sprite => {
-				if (sprite.type == 'wall'){
-					sprite.render()
-				}
-			});
+			renderSprites();
 			player.render();
 	
 			drawTextShadowed('SCORE', 0.5, 'orange', {
