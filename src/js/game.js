@@ -5,6 +5,7 @@ const DECELERATION = 0.1
 const BIG_PLATFORM = 100
 const NEW_LEVEL = 100
 
+var loaded;
 let imageGoblin = new Image();
 imageGoblin.src = '../src/img/goblin.png';
 let imageFire = new Image();
@@ -19,6 +20,9 @@ let imageLife = new Image();
 imageLife.src = '../src/img/life.png';
 let imageDragon = new Image();
 imageDragon.src = '../src/img/dragon.png';
+imageFire.onload = function () {
+	loaded = true;
+}
 
 let gameScene = 0 // 0 - menu, 1 - game
 let sprites = [];
@@ -552,10 +556,29 @@ let loop = kontra.gameLoop({
 		if (gameScene == 0){
 			sprites.map(sprite => sprite.render());
 
+			if (loaded){
+				for (let i = 0; i < 10 * 16; i += 16){
+					textCanvas.getContext("2d").drawImage(
+						imageFire, 82 + i, 27);
+					textCanvas.getContext("2d").drawImage(
+						imageFire, 82 + i, 39);
+				}
+			}
 			drawTextShadowed('STEEM MONSTERS', 0.5, 'orange', {
 				x: 88,
 				y: 32
 			})
+
+			if (loaded){
+				for (let i = 0; i < 19 * 16; i += 16){
+					textCanvas.getContext("2d").drawImage(
+						imageFire, 10 + i, 52);
+					textCanvas.getContext("2d").drawImage(
+						imageFire, 10 + i, 64);
+					textCanvas.getContext("2d").drawImage(
+						imageFire, 10 + i, 76);
+				}
+			}
 			drawTextShadowed('GOBLIN TOWER 13k', 0.9, 'orange', {
 				x: 16,
 				y: 60
