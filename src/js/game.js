@@ -43,6 +43,8 @@ imageFire.onload = function () {
 	loaded = true;
 }
 
+var audio = new Audio('sfx/jump.wav');
+
 let gameScene = 0 // 0 - menu, 1 - game
 let sprites = [];
 let score = 0;
@@ -420,6 +422,7 @@ imageGoblin.onload = function() {
 					this.dy = -(3 + Math.sqrt(Math.abs(this.dx)));
 					this.ddy = DECELERATION;
 					this.onPlatform = false;
+					audio.play();
 				}
 			}
 			if (kontra.keys.pressed('left') || kontra.keys.pressed('right')){
@@ -589,6 +592,7 @@ let loop = kontra.gameLoop({
 						// bounce if in air
 						if (!player.onPlatform){
 							player.dx = -player.dx;
+							audio.play();
 						}
 						break
 					}

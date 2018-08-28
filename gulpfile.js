@@ -19,12 +19,14 @@ const paths = {
         html: 'src/**.html',
         css: 'src/css/**.css',
 		js: ['src/js/lib/**.js', 'src/js/game.js'],
+        sfx: 'src/sfx/**',
         images: 'src/img/**'
     },
     dist: {
         dir: 'dist',
         css: 'style.min.css',
         js: 'script.min.js',
+        sfx: 'dist/sfx',
         images: 'dist/img'
     }
 };
@@ -76,6 +78,11 @@ gulp.task('buildJS', () => {
         .pipe(gulp.dest(paths.dist.dir));
 });
 
+gulp.task('copySounds', () => {
+    return gulp.src(paths.src.sfx)
+        .pipe(gulp.dest(paths.dist.sfx));
+});
+
 gulp.task('optimizeImages', () => {
     return gulp.src(paths.src.images)
         .pipe(imagemin())
@@ -102,7 +109,7 @@ gulp.task('test', gulp.parallel(
 
 gulp.task('build', gulp.series(
     'cleanDist',
-    gulp.parallel('buildHTML', 'buildCSS', 'buildJS', 'optimizeImages'),
+    gulp.parallel('buildHTML', 'buildCSS', 'buildJS', 'copySounds', 'optimizeImages'),
     'zip'
 ));
 
@@ -110,6 +117,7 @@ gulp.task('watch', () => {
     gulp.watch(paths.src.html, gulp.series('buildHTML', 'zip'));
     gulp.watch(paths.src.css, gulp.series('buildCSS', 'zip'));
     gulp.watch(paths.src.js, gulp.series('buildJS', 'zip'));
+    gulp.watch(paths.src.sfx, gulp.series('copySounds', 'zip'));
     gulp.watch(paths.src.images, gulp.series('optimizeImages', 'zip'));
 });
 
