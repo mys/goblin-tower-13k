@@ -217,7 +217,7 @@ function createMonster(y){
 	if (sprites.find(sprite => 
 		sprite.type == 'monster' &&
 		sprite.side == side &&
-		sprite.y < 0))
+		sprite.y - 80 < y))
 	{
 		return;
 	}
@@ -276,7 +276,7 @@ function createPlatform(y=192, fullWidth=false){
 				this.highestScore % BIG_PLATFORM == 0 &&
 				this.highestScore != 0)
 			{
-				TCTX.clearRect(this.x, this.y - 12, this.width, this.height + 20);
+				TCTX.clearRect(this.x, this.y - 16, this.width, this.height + 24);
 				drawTextShadowed(this.highestScore.toString(), 0.4, 'orange', {
 					x: this.x + this.width / 2 - 2 - (2 * highestScore.toString().length),
 					y: this.y + 2,
@@ -306,6 +306,7 @@ function createScene(){
 				createBackground(y);
 				createWall('left', true).y = y;
 				createWall('right', true).y = y;
+				drawLandName();
 			}
 		}
 	}
@@ -338,6 +339,25 @@ function createBackground(y=0){
 	sprites.push(background);
 }
 
+function drawLandName(){
+	drawTextShadowed(levels[level]['land'], 0.5, levels[level]['color'], {
+		x: kontra.canvas.width / 2 - 5 * levels[level]['land'].length,
+		y: kontra.canvas.height - 32
+	});
+	// setTimeout(function(){ 
+	// 	TCTX.clearRect(WALLS_WIDTH, kontra.canvas.height - 32, 
+	// 		kontra.canvas.width - 2 * WALLS_WIDTH, 32);
+	// 	drawTextShadowed(levels[level]['land'], 0.5, levels[level]['background'], {
+	// 		x: kontra.canvas.width / 2 - 5 * levels[level]['land'].length,
+	// 		y: kontra.canvas.height - 32
+	// 	});
+	//  }, 1500);
+	 setTimeout(function(){ 
+		TCTX.clearRect(WALLS_WIDTH, kontra.canvas.height - 32, 
+			kontra.canvas.width - 2 * WALLS_WIDTH, 32);
+	 }, 4000);
+}
+
 function isNewLevel(){
 	return highestScore % NEW_LEVEL == 0 && highestScore != 0;
 }
@@ -363,6 +383,7 @@ function startGame(){
 	createBackground();
 	createPlatform(y=kontra.canvas.height - BLOCK, true);
 	createScene();
+	drawLandName();
 	gameScene = 1;
 }
 
