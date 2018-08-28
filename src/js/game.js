@@ -554,7 +554,21 @@ let loop = kontra.gameLoop({
 	},
 	render: function(){
 		if (gameScene == 0){
-			sprites.map(sprite => sprite.render());
+			sprites.map(sprite => {
+				if (sprite.type == 'background'){
+					sprite.render()
+				}
+			});
+			sprites.map(sprite => {
+				if (sprite.type == 'platform'){
+					sprite.render()
+				}
+			});
+			sprites.map(sprite => {
+				if (sprite.type == 'wall'){
+					sprite.render()
+				}
+			});
 
 			if (loaded){
 				for (let i = 0; i < 10 * 16; i += 16){
