@@ -6,40 +6,40 @@ const BIG_PLATFORM = 100
 const NEW_LEVEL = 100
 
 var loaded;
-let imageGoblin = new Image();
-imageGoblin.src = '../src/img/goblin.png';
-let imageFire = new Image();
-imageFire.src = '../src/img/fire.png';
-let imageWater = new Image();
-imageWater.src = '../src/img/water.png';
-let imageEarth = new Image();
-imageEarth.src = '../src/img/earth.png';
-let imageDeath = new Image();
-imageDeath.src = '../src/img/death.png';
-let imageLife = new Image();
-imageLife.src = '../src/img/life.png';
-let imageDragon = new Image();
-imageDragon.src = '../src/img/dragon.png';
+let iGoblin = new Image();
+iGoblin.src = '../src/img/goblin.png';
+let iFire = new Image();
+iFire.src = '../src/img/fire.png';
+let iWater = new Image();
+iWater.src = '../src/img/water.png';
+let iEarth = new Image();
+iEarth.src = '../src/img/earth.png';
+let iDeath = new Image();
+iDeath.src = '../src/img/death.png';
+let iLife = new Image();
+iLife.src = '../src/img/life.png';
+let iDragon = new Image();
+iDragon.src = '../src/img/dragon.png';
 
-let silvershieldwarrior = new Image();
-silvershieldwarrior.src = '../src/img/silvershieldwarrior.png';
-let mischievousmermaid = new Image();
-mischievousmermaid.src = '../src/img/mischievousmermaid.png';
-let goblinsorcerer = new Image();
-goblinsorcerer.src = '../src/img/goblinsorcerer.png';
-let firedemon = new Image();
-firedemon.src = '../src/img/firedemon.png';
-let koboldminer = new Image();
-koboldminer.src = '../src/img/koboldminer.png';
+let iWarrior = new Image();
+iWarrior.src = '../src/img/silvershieldwarrior.png';
+let iMermaid = new Image();
+iMermaid.src = '../src/img/mischievousmermaid.png';
+let iSorcerer = new Image();
+iSorcerer.src = '../src/img/goblinsorcerer.png';
+let iDemon = new Image();
+iDemon.src = '../src/img/firedemon.png';
+let iKobold = new Image();
+iKobold.src = '../src/img/koboldminer.png';
 let monsters = [
-	{ 'monster': silvershieldwarrior , x: 12 },
-	{ 'monster': mischievousmermaid , x: 16 },
-	{ 'monster': goblinsorcerer , x: 20 },
-	{ 'monster': firedemon , x: 1 },
-	{ 'monster': koboldminer , x: 12 }
+	{ 'm': iWarrior , x: 12 },
+	{ 'm': iMermaid , x: 16 },
+	{ 'm': iSorcerer , x: 20 },
+	{ 'm': iDemon , x: 1 },
+	{ 'm': iKobold , x: 12 }
 ];
 
-imageFire.onload = function () {
+iFire.onload = function () {
 	loaded = true;
 }
 
@@ -49,52 +49,52 @@ let gameScene = 0 // 0 - menu, 1 - game
 let sprites = [];
 let score = 0;
 let topScore = 0;
-let highestScore = -10; // base is 0
+let hScore = -10; // base is 0
 let tilt = true;
 let spriteSheet;
 let player;
 let levels = [
 	{
-		'splinter': 'Fire',
+		's': 'Fire',
 		'color': 'indianred',
 		'background': '#752424',
 		'land': 'The Burning Lands',
-		'block': imageFire,
+		'block': iFire,
 	},
 	{
-		'splinter': 'Water',
+		's': 'Water',
 		'color': 'royalblue',
 		'background': '#11286e',
 		'land': 'AZMARE Islands',
-		'block': imageWater,
+		'block': iWater,
 	},
 	{
-		'splinter': 'Earth',
+		's': 'Earth',
 		'color': 'seagreen',
 		'background': '#20603b',
 		'land': 'ANUMUN',
-		'block': imageEarth,
+		'block': iEarth,
 	},
 	{
-		'splinter': 'Death',
+		's': 'Death',
 		'color': 'mediumpurple',
 		'background': '#3d1f7a',
 		'land': 'MorTis',
-		'block': imageDeath,
+		'block': iDeath,
 	},
 	{
-		'splinter': 'Life',
+		's': 'Life',
 		'color': 'navajowhite',
 		'background': '#ffebcc',
 		'land': 'Khymeria',
-		'block': imageLife,
+		'block': iLife,
 	},
 	{
-		'splinter': 'Dragon',
+		's': 'Dragon',
 		'color': '#806c00',
 		'background': 'gold',
 		'land': 'Draykh-Nahka',
-		'block': imageDragon
+		'block': iDragon
 	},
 ]
 let level = 0
@@ -168,25 +168,20 @@ function createWall(side='left', open=false){
 				if (this.side == 'left'){
 					if (this.x < WALLS_WIDTH - kontra.canvas.width / 2){
 						this.x = WALLS_WIDTH - kontra.canvas.width / 2;
-						this.dx = 0;
-						this.ddx = 0;
+						this.dx = this.ddx = 0;
 					}
 					else if (this.x > 0){
-						this.x = 0;
-						this.dx = 0;
-						this.ddx = 0;
+						this.x = this.dx = this.ddx = 0;
 					}
 				}
 				else {
 					if (this.x > kontra.canvas.width - WALLS_WIDTH){
 						this.x = kontra.canvas.width - WALLS_WIDTH;
-						this.dx = 0;
-						this.ddx = 0;
+						this.dx = this.ddx = 0;
 					}
 					else if (this.x < kontra.canvas.width / 2){
 						this.x = kontra.canvas.width / 2;
-						this.dx = 0;
-						this.ddx = 0;
+						this.dx = this.ddx = 0;
 					}
 				}
 			}
@@ -225,7 +220,7 @@ function createMonster(y){
 	let monster = kontra.sprite({
 		x: ran['x'],
 		y: y,
-		block: ran['monster'],
+		block: ran['m'],
 		type: 'monster',
 		side: side,
 		render(){
@@ -246,7 +241,7 @@ function createMonster(y){
 }
 
 function createPlatform(y=192, fullWidth=false){
-	highestScore += 10;
+	hScore += 10;
 	if (isNewLevel())
 	{
 		level += 1;
@@ -256,18 +251,18 @@ function createPlatform(y=192, fullWidth=false){
 	}
 	let width = fullWidth ? 192 : Math.floor((Math.random() * 3) + 2) * BLOCK;
 	let platform = kontra.sprite({
-		width: highestScore % BIG_PLATFORM == 0 
+		width: hScore % BIG_PLATFORM == 0 
 			? kontra.canvas.width - 2 * WALLS_WIDTH 
 			: width,
 		height: BLOCK,
-		x: highestScore % BIG_PLATFORM == 0 
+		x: hScore % BIG_PLATFORM == 0 
 			? WALLS_WIDTH
 			: WALLS_WIDTH + Math.floor(
 				Math.random() * (kontra.canvas.width - width - 2 * WALLS_WIDTH)),
 		y: y,
 		block: levels[level]['block'],
 		type: 'platform',
-		highestScore: highestScore,
+		highestScore: hScore,
 		render(){
 			for (let i = 0; i < this.width; i += BLOCK){
 				this.context.drawImage(this.block, this.x + i, this.y);
@@ -278,7 +273,7 @@ function createPlatform(y=192, fullWidth=false){
 			{
 				TCTX.clearRect(this.x, this.y - 16, this.width, this.height + 24);
 				drawTextShadowed(this.highestScore.toString(), 0.4, 'orange', {
-					x: this.x + this.width / 2 - 2 - (2 * highestScore.toString().length),
+					x: this.x + this.width / 2 - 2 - (2 * hScore.toString().length),
 					y: this.y + 2,
 				})
 			}
@@ -297,7 +292,7 @@ function createScene(){
 			sprite.y < i + BLOCK * 2))
 		{
 			sprite = sprites.find(
-				sprite => sprite.highestScore == highestScore);
+				sprite => sprite.highestScore == hScore);
 			createPlatform(sprite.y - 32);
 			
 			if (isNewLevel())
@@ -337,13 +332,12 @@ function createBackground(y=0){
 		type: 'background',
 		render(){
 			this.draw();
-			var pixels = this.context.getImageData(
+			let pixels = this.context.getImageData(
 				this.x, this.y, this.width, this.height
 			);
-			var all = pixels.data.length;
-			var data = pixels.data;
+			let data = pixels.data;
 			let j = 0;
-			for (let i = all; i >= 0; i -= 4){
+			for (let i = pixels.data.length; i >= 0; i -= 4){
 				data[i] += j;
 				data[i-1] += j;
 				data[i-2] += j;
@@ -362,20 +356,20 @@ function drawLandName(){
 		x: kontra.canvas.width / 2 - 5 * levels[level]['land'].length,
 		y: kontra.canvas.height - 32
 	});
-	 setTimeout(function(){ 
-		TCTX.clearRect(WALLS_WIDTH, kontra.canvas.height - 32, 
-			kontra.canvas.width - 2 * WALLS_WIDTH, 32);
-	 }, 4000);
+	setTimeout(function(){ 
+	TCTX.clearRect(WALLS_WIDTH, kontra.canvas.height - 32, 
+		kontra.canvas.width - 2 * WALLS_WIDTH, 32);
+	}, 4000);
 }
 
 function isNewLevel(){
-	return highestScore % NEW_LEVEL == 0 && highestScore != 0;
+	return hScore % NEW_LEVEL == 0 && hScore != 0;
 }
 
 function startMenu(){
 	gameScene = 0;
 	score = 0;
-	highestScore = -10;
+	hScore = -10;
 	player.x = 320 / 2 - 8;
 	player.y = 240 / 2 - 8;
 	player.dy = 0;
@@ -397,12 +391,12 @@ function startGame(){
 	gameScene = 1;
 }
 
-imageGoblin.onload = function() {
+iGoblin.onload = function() {
 	createTextCanvas();
 
 	// use kontra.spriteSheet to create animations from an image
 	spriteSheet = kontra.spriteSheet({
-		image: imageGoblin,
+		image: iGoblin,
 		frameWidth: 16,
 		frameHeight: 16,
 		animations: {
@@ -433,14 +427,10 @@ imageGoblin.onload = function() {
 		x: 320 / 2 - 8,
 		y: 240 / 2 - 8,
 		ddy: DECELERATION,
-		// width: BLOCK,
-		// height: BLOCK,
-		// color: 'red',
 		type: 'player',
 		onPlatform: false,
 		animation: 'idle',
 		animations: spriteSheet.animations,
-
 		animate(anim){
 			if (this.animation != anim){
 				this.animation = anim;
@@ -498,7 +488,7 @@ imageGoblin.onload = function() {
 					this.animate('walkRight');
 				} else if (this.dx < 0){
 					this.animate('walkLeft');
-				} else{
+				} else {
 					this.animate('idle');
 				}
 			} else {
@@ -506,7 +496,7 @@ imageGoblin.onload = function() {
 					this.animate('jumpRight');
 				} else if (this.dx < 0){
 					this.animate('jumpLeft');
-				} else{
+				} else {
 					this.animate('jump');
 				}
 			}
@@ -682,9 +672,9 @@ let loop = kontra.gameLoop({
 			if (loaded){
 				for (let i = 0; i < 10 * 16; i += 16){
 					textCanvas.getContext("2d").drawImage(
-						imageFire, 82 + i, 27);
+						iFire, 82 + i, 27);
 					textCanvas.getContext("2d").drawImage(
-						imageFire, 82 + i, 39);
+						iFire, 82 + i, 39);
 				}
 			}
 			drawTextShadowed('STEEM MONSTERS', 0.5, 'orange', {
@@ -695,11 +685,11 @@ let loop = kontra.gameLoop({
 			if (loaded){
 				for (let i = 0; i < 19 * 16; i += 16){
 					textCanvas.getContext("2d").drawImage(
-						imageFire, 10 + i, 52);
+						iFire, 10 + i, 52);
 					textCanvas.getContext("2d").drawImage(
-						imageFire, 10 + i, 64);
+						iFire, 10 + i, 64);
 					textCanvas.getContext("2d").drawImage(
-						imageFire, 10 + i, 76);
+						iFire, 10 + i, 76);
 				}
 			}
 			drawTextShadowed('GOBLIN TOWER 13k', 0.9, 'orange', {
