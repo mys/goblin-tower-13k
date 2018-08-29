@@ -334,7 +334,25 @@ function createBackground(y=0){
 		x: WALLS_WIDTH,
 		y: y,
 		color: levels[level]['background'],
-		type: 'background'
+		type: 'background',
+		render(){
+			this.draw();
+			var pixels = this.context.getImageData(
+				this.x, this.y, this.width, this.height
+			);
+			var all = pixels.data.length;
+			var data = pixels.data;
+			let j = 0;
+			for (let i = all; i >= 0; i -= 4){
+				data[i] += j;
+				data[i-1] += j;
+				data[i-2] += j;
+				if (i % 3072 == 0){
+					j -= 2;
+				}
+			}
+			this.context.putImageData(pixels, this.x, this.y);
+		}
 	});
 	sprites.push(background);
 }
