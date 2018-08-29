@@ -3,7 +3,7 @@ const BLOCK = 16
 const VELOCITY = 6
 const DECELERATION = 0.1
 const BIG_PLATFORM = 100
-const NEW_LEVEL = 100
+const NEW_LEVEL = 500
 
 var loaded;
 let iGoblin = new Image();
