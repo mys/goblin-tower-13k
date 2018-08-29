@@ -39,10 +39,6 @@ let monsters = [
 	{ 'm': iKobold , x: 12 }
 ];
 
-iFire.onload = function () {
-	loaded = true;
-}
-
 var audio = new Audio('sfx/jump.wav');
 
 let gameScene = 0 // 0 - menu, 1 - game, -1 - credits
@@ -368,8 +364,7 @@ function isNewLevel(){
 }
 
 function startMenu(){
-	gameScene = 0;
-	score = 0;
+	gameScene = score = 0;
 	hScore = -10;
 	player.x = 320 / 2 - 8;
 	player.y = 240 / 2 - 8;
@@ -388,12 +383,36 @@ function startGame(){
 	createPlatform(y=kontra.canvas.height - BLOCK, true);
 	createScene();
 	drawLandName();
+	drawControls();
 	gameScene = 1;
 }
 
 function startCredits(){
 	TCTX.clearRect(0, 0, kontra.canvas.width, kontra.canvas.height);
 	gameScene = -1;
+}
+
+function drawControls(){
+	drawTextShadowed('Controls', 0.3, 'orange', {
+		x: 260,
+		y: 120
+	});
+	drawTextShadowed('UP   SPACE', 0.3, 'orange', {
+		x: 260,
+		y: 136
+	});
+	drawTextShadowed('LEFT RIGHT', 0.3, 'orange', {
+		x: 260,
+		y: 152
+	});
+	drawTextShadowed('ESC', 0.3, 'orange', {
+		x: 260,
+		y: 168
+	});
+	setTimeout(function(){ 
+	TCTX.clearRect(260, 120, 
+		WALLS_WIDTH, 96);
+	}, 4000);
 }
 
 iGoblin.onload = function() {
@@ -524,7 +543,10 @@ iGoblin.onload = function() {
 	startMenu();
 
 	// wait a moment for resources
-	setTimeout(function(){ loop.start(); }, 500);
+	setTimeout(function(){ 
+		loop.start();
+		loaded = true;
+	}, 500);
 };
 
 function renderSprites(){
@@ -740,10 +762,6 @@ let loop = kontra.gameLoop({
 					y: 192
 				})
 			}
-			drawText('STEEM @mys', 0.4, 'brown', {
-				x: 229,
-				y: 225
-			})
 			drawText('STEEM @mys', 0.4, 'orange', {
 				x: 228,
 				y: 224
