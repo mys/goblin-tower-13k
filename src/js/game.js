@@ -344,14 +344,6 @@ function drawLandName(){
 		x: kontra.canvas.width / 2 - 5 * levels[level]['land'].length,
 		y: kontra.canvas.height - 32
 	});
-	// setTimeout(function(){ 
-	// 	TCTX.clearRect(WALLS_WIDTH, kontra.canvas.height - 32, 
-	// 		kontra.canvas.width - 2 * WALLS_WIDTH, 32);
-	// 	drawTextShadowed(levels[level]['land'], 0.5, levels[level]['background'], {
-	// 		x: kontra.canvas.width / 2 - 5 * levels[level]['land'].length,
-	// 		y: kontra.canvas.height - 32
-	// 	});
-	//  }, 1500);
 	 setTimeout(function(){ 
 		TCTX.clearRect(WALLS_WIDTH, kontra.canvas.height - 32, 
 			kontra.canvas.width - 2 * WALLS_WIDTH, 32);
@@ -544,6 +536,20 @@ function renderSprites(){
 	});
 }
 
+function endGame(){
+	topScore = Math.max(score, topScore);
+	TCTX.clearRect(0, 0, kontra.canvas.width, kontra.canvas.height);
+	sprites.map(sprite => {
+		if (sprite.type == 'wall'){
+			sprite.close();
+		}
+	});
+	sprites.sort(sprite => 
+		// sprite.type == 'wall' &&
+		sprite.color == levels[level]['color']);
+	startMenu();
+}
+
 let loop = kontra.gameLoop({
 	update: function(){
 		if (gameScene == 0){
@@ -557,6 +563,11 @@ let loop = kontra.gameLoop({
 			}
 		}
 		else{
+			if (kontra.keys.pressed('esc')){
+				endGame();
+				return;
+			}
+
 			sprites.map(sprite => sprite.update());
 			player.update();
 
@@ -564,17 +575,7 @@ let loop = kontra.gameLoop({
 			if (player.dy > 0 &&
 				Math.floor(player.y + player.height) >= kontra.canvas.height)
 			{
-				topScore = Math.max(score, topScore);
-				TCTX.clearRect(0, 0, kontra.canvas.width, kontra.canvas.height);
-				sprites.map(sprite => {
-					if (sprite.type == 'wall'){
-						sprite.close();
-					}
-				});
-				sprites.sort(sprite => 
-					// sprite.type == 'wall' &&
-					sprite.color == levels[level]['color']);
-				startMenu();
+				endGame();
 			}
 
 			// collide with platforms
