@@ -7,30 +7,30 @@ let NEW_LEVEL = 500
 
 let loaded;
 let iGoblin = new Image();
-iGoblin.src = '../src/img/goblin.png';
+iGoblin.src = 'img/goblin.png';
 let iFire = new Image();
-iFire.src = '../src/img/fire.png';
+iFire.src = 'img/fire.png';
 let iWater = new Image();
-iWater.src = '../src/img/water.png';
+iWater.src = 'img/water.png';
 let iEarth = new Image();
-iEarth.src = '../src/img/earth.png';
+iEarth.src = 'img/earth.png';
 let iDeath = new Image();
-iDeath.src = '../src/img/death.png';
+iDeath.src = 'img/death.png';
 let iLife = new Image();
-iLife.src = '../src/img/life.png';
+iLife.src = 'img/life.png';
 let iDragon = new Image();
-iDragon.src = '../src/img/dragon.png';
+iDragon.src = 'img/dragon.png';
 
 let iWarrior = new Image();
-iWarrior.src = '../src/img/silvershieldwarrior.png';
+iWarrior.src = 'img/silvershieldwarrior.png';
 let iMermaid = new Image();
-iMermaid.src = '../src/img/mischievousmermaid.png';
+iMermaid.src = 'img/mischievousmermaid.png';
 let iSorcerer = new Image();
-iSorcerer.src = '../src/img/goblinsorcerer.png';
+iSorcerer.src = 'img/goblinsorcerer.png';
 let iDemon = new Image();
-iDemon.src = '../src/img/firedemon.png';
+iDemon.src = 'img/firedemon.png';
 let iKobold = new Image();
-iKobold.src = '../src/img/koboldminer.png';
+iKobold.src = 'img/koboldminer.png';
 let monsters = [
 	{ 'm': iWarrior , x: 12 },
 	{ 'm': iMermaid , x: 16 },
@@ -819,3 +819,4 @@ let loop = kontra.gameLoop({
 		}
 	}
 });
+var fillerQ;
