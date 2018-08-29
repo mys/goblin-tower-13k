@@ -1,11 +1,11 @@
-const WALLS_WIDTH = 64
-const BLOCK = 16
-const VELOCITY = 6
-const DECELERATION = 0.1
-const BIG_PLATFORM = 100
-const NEW_LEVEL = 500
+let WALLS_WIDTH = 64
+let BLOCK = 16
+let VELOCITY = 6
+let DECELERATION = 0.1
+let BIG_PLATFORM = 100
+let NEW_LEVEL = 500
 
-var loaded;
+let loaded;
 let iGoblin = new Image();
 iGoblin.src = '../src/img/goblin.png';
 let iFire = new Image();
