@@ -45,7 +45,7 @@ iFire.onload = function () {
 
 var audio = new Audio('sfx/jump.wav');
 
-let gameScene = 0 // 0 - menu, 1 - game
+let gameScene = 0 // 0 - menu, 1 - game, -1 - credits
 let sprites = [];
 let score = 0;
 let topScore = 0;
@@ -98,6 +98,7 @@ let levels = [
 	},
 ]
 let level = 0
+let lock = false
 
 kontra.init();
 
@@ -377,7 +378,6 @@ function startMenu(){
 }
 
 function startGame(){
-	// reset scene
 	TCTX.clearRect(0, 0, kontra.canvas.width, kontra.canvas.height);
 	sprites = sprites.filter(function (sprite) {
 		return sprite.type == 'wall';
@@ -389,6 +389,11 @@ function startGame(){
 	createScene();
 	drawLandName();
 	gameScene = 1;
+}
+
+function startCredits(){
+	TCTX.clearRect(0, 0, kontra.canvas.width, kontra.canvas.height);
+	gameScene = -1;
 }
 
 iGoblin.onload = function() {
@@ -518,7 +523,8 @@ iGoblin.onload = function() {
 	createWalls();
 	startMenu();
 
-	loop.start();
+	// wait a moment for resources
+	setTimeout(function(){ loop.start(); }, 500);
 };
 
 function renderSprites(){
@@ -558,6 +564,40 @@ function endGame(){
 	startMenu();
 }
 
+function drawLogo(){
+	if (loaded){
+		for (let i = 0; i < 10 * 16; i += 16){
+			textCanvas.getContext("2d").drawImage(
+				iFire, 82 + i, 27);
+			textCanvas.getContext("2d").drawImage(
+				iFire, 82 + i, 39);
+		}
+	}
+	drawTextShadowed('STEEM MONSTERS', 0.5, 'orange', {
+		x: 88,
+		y: 32
+	})
+
+	if (loaded){
+		for (let i = 0; i < 19 * 16; i += 16){
+			textCanvas.getContext("2d").drawImage(
+				iFire, 10 + i, 52);
+			textCanvas.getContext("2d").drawImage(
+				iFire, 10 + i, 64);
+			textCanvas.getContext("2d").drawImage(
+				iFire, 10 + i, 76);
+		}
+	}
+	drawTextShadowed('GOBLIN TOWER 13k', 0.9, 'orange', {
+		x: 16,
+		y: 60
+	})
+	drawTextShadowed('13 KILOBYTE  MINI GAME', 0.4, 'orange', {
+		x: 68,
+		y: 100
+	})
+}
+
 let loop = kontra.gameLoop({
 	update: function(){
 		if (gameScene == 0){
@@ -569,10 +609,26 @@ let loop = kontra.gameLoop({
 			if (kontra.keys.pressed('space')){
 				startGame();
 			}
-		}
-		else{
+			if (kontra.keys.pressed('esc') && !lock){
+				startCredits();
+
+				lock = true;
+				setTimeout(function(){ lock = false; }, 500);
+			}
+		} else if (gameScene == -1){
+			if (kontra.keys.pressed('esc') && !lock){
+				endGame();
+				startMenu();
+
+				lock = true;
+				setTimeout(function(){ lock = false; }, 500);
+			}
+		} else {
 			if (kontra.keys.pressed('esc')){
 				endGame();
+
+				lock = true;
+				setTimeout(function(){ lock = false; }, 500);
 				return;
 			}
 
@@ -655,54 +711,28 @@ let loop = kontra.gameLoop({
 			}
 
 			// normalizations (deblur)
-			sprites.map(sprite =>{
-				if (sprite.dx == 0){
-					sprite.x = Math.round(sprite.x);
-				}
-				if (sprite.dy == 0){
-					sprite.y = Math.round(sprite.y);
-				}
-			})
+			// sprites.map(sprite =>{
+			// 	if (sprite.dx == 0){
+			// 		sprite.x = Math.round(sprite.x);
+			// 	}
+			// 	if (sprite.dy == 0){
+			// 		sprite.y = Math.round(sprite.y);
+			// 	}
+			// })
 		}
 	},
 	render: function(){
 		if (gameScene == 0){
 			renderSprites();
 
-			if (loaded){
-				for (let i = 0; i < 10 * 16; i += 16){
-					textCanvas.getContext("2d").drawImage(
-						iFire, 82 + i, 27);
-					textCanvas.getContext("2d").drawImage(
-						iFire, 82 + i, 39);
-				}
-			}
-			drawTextShadowed('STEEM MONSTERS', 0.5, 'orange', {
-				x: 88,
-				y: 32
-			})
-
-			if (loaded){
-				for (let i = 0; i < 19 * 16; i += 16){
-					textCanvas.getContext("2d").drawImage(
-						iFire, 10 + i, 52);
-					textCanvas.getContext("2d").drawImage(
-						iFire, 10 + i, 64);
-					textCanvas.getContext("2d").drawImage(
-						iFire, 10 + i, 76);
-				}
-			}
-			drawTextShadowed('GOBLIN TOWER 13k', 0.9, 'orange', {
-				x: 16,
-				y: 60
-			})
-			drawText('13 KILOBYTE  MINI GAME', 0.3, 'orange', {
-				x: 91,
-				y: 100
-			})
+			drawLogo();
 			drawText('PRESS SPACE TO START', 0.5, tilt ? 'orange' : 'brown', {
 				x: 64,
-				y: 136
+				y: 130
+			})
+			drawText('PRESS ESC TO CREDITS', 0.5, tilt ? 'brown' : 'orange', {
+				x: 64,
+				y: 152
 			})
 			if (topScore > 0){
 				drawTextShadowed('TOP SCORE ' + topScore.toString(), 0.5, 'orange', {
@@ -710,12 +740,45 @@ let loop = kontra.gameLoop({
 					y: 192
 				})
 			}
-			drawText('STEEM  @mys', 0.3, 'brown', {
-				x: 244,
-				y: 228
+			drawText('STEEM @mys', 0.4, 'brown', {
+				x: 229,
+				y: 225
 			})
-		}
-		else{
+			drawText('STEEM @mys', 0.4, 'orange', {
+				x: 228,
+				y: 224
+			})
+		} else if (gameScene == -1){
+			renderSprites();
+
+			drawLogo();
+			let can = canvas.getContext("2d");
+			can.fillStyle=levels[level]['background'];
+			can.fillRect(3, 115, 314, 110);
+			can.fillStyle=levels[level]['color'];
+			can.fillRect(4, 116, 312, 108);
+			drawTextShadowed('With credits to:', 0.5, 'orange', {
+				x: 84,
+				y: 122
+			})
+			drawTextShadowed('@steemmonsters team', 0.4, 'orange', {
+				x: 78,
+				y: 148
+			})
+			drawTextShadowed('@heraclio artist', 0.4, 'orange', {
+				x: 96,
+				y: 168
+			})
+			drawTextShadowed('Redshrike from opengameart.org', 0.4, 'orange', {
+				x: 40,
+				y: 188
+			})
+			drawTextShadowed('and @mys', 0.4, 'orange', {
+				x: 126,
+				y: 208
+			})
+
+		} else {
 			renderSprites();
 			player.render();
 	
