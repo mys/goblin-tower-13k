@@ -2,13 +2,17 @@
 
 Goblin Tower 13k (aka) Icy Tower / Xjump game clone. 8-bit pixel art HTML5 platform game set in a tower, where the player's goal is to jump as high as possible.
 
+https://mys.github.io/goblin-tower-13k/
+
+*zipped size: 13KB (13312 bytes)*
+
 # Game jams
 
 The game competes in 2 contests:
 
-1. Steemmonsters Game Jam
+1. Steem Monsters Game Jam
 
-	Main character is Goblin (Sorcerer) from Steemmonsters universe. He is jumping up through each of Splinter's world (Fire, Water, Earth, Life, Death and Dragon). On his tour, player discover many characters and places from the card game.
+	Main character is Goblin (Sorcerer) from Steem Monsters universe. He is jumping up through each of Splinter's world (Fire, Water, Earth, Life, Death and Dragon). On his tour, player discover many characters and places from the card game.
 
 	https://steemit.com/steemmonsters/@steemmonsters/steem-monsters-usd1-000-game-jam-invitational-in-collaboration-with-utopian-io-steemgg-and-blocktrades
 
@@ -23,7 +27,7 @@ The game competes in 2 contests:
 # Goals
 
 - HTML5 - pure Javascript with use of basic 3rd party helpers
-- Steemmonsters Splinters world and characters
+- Steem Monsters Splinters world and characters
 - "Retro" pixel art style to get under limit of 13kB size
 - IcyTower play similarity
 
@@ -36,6 +40,7 @@ The game competes in 2 contests:
 run dist/index.html
 ```
 
-# Demo
+# Screenshots
 
-..
+![](https://i.imgur.com/TvV3hqX.png)
+![](https://i.imgur.com/x3cmTbT.png)
